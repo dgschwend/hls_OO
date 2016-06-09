@@ -35,13 +35,15 @@ void WeightsCache::loadFromDRAM(MemoryController *DRAM) {
   LOG_LEVEL++;
 
   weightaddr_t addr;
-  // Load Filter Coefficients (1x1 Filters are expanded to 3x3)
+// Load Filter Coefficients (1x1 Filters are expanded to 3x3)
+L_WCACHE_LOAD_WEIGHTS:
   for (addr = 0; addr < ch_in * ch_out * weights_per_filter; addr++) {
     data_t weight;
     weight = DRAM->loadNextWeight();
     addWeight(weight);
   }
-  // Load Biases
+// Load Biases
+L_WCACHE_LOAD_BIAS:
   for (addr = 0; addr < ch_out; addr++) {
     data_t bias = DRAM->loadNextWeight();
     addWeight(bias);

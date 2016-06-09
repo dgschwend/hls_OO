@@ -32,8 +32,12 @@ add_files -tb weights.bin
 open_solution "zynq"
 set_part {xc7z045fbg676-3} -tool vivado
 create_clock -period 5 -name default
+config_rtl -encoding auto -reset control -reset_level high
+config_compile -name_max_length 60 -no_signed_zeros -pipeline_loops 0 -unsafe_math_optimizations
+config_dataflow -default_channel pingpong -fifo_depth 0
+config_interface -m_axi_offset direct -register_io scalar_all -trim_dangling_port
 #source "./ZynqNet/zynq/directives.tcl"
 csim_design -clean -O
 csynth_design
-cosim_design -O -reduce_diskspace -rtl vhdl
+cosim_design -O -trace_level port -rtl vhdl
 export_design -format ip_catalog

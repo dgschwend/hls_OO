@@ -26,8 +26,7 @@
 class ProcessingElement {
  public:
   ProcessingElement();
-  void setup(channel_t co_offset, ImageCache *ICache, WeightsCache *WCache,
-             OutputCache *OCache);
+  void setup(ImageCache *ICache, WeightsCache *WCache, OutputCache *OCache);
   void setLayerConfig(layer_t &layer);
   void processInputChannel(coordinate_t y_in, coordinate_t x_in, channel_t ci);
 
@@ -41,7 +40,6 @@ class ProcessingElement {
   OutputCache *OCache;
   kernel_t kernel;
   channel_t ch_out;
-  channel_t co_offset;
   dimension_t width_in;
   dimension_t height_in;
   data_t mult_result[9];

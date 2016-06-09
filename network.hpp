@@ -10,26 +10,26 @@
 #define _NETWORK_H_
 
 // Size Limits for this Network
-const int MAX_NUM_LAYERS = 26;
-const int MAX_WEIGHTS_PER_LAYER = 513000;
-const int MAX_IMAGE_CACHE_SIZE = 32768;
-const int MAX_INPUT_PER_LAYER = 1048576;
-const int MAX_NUM_CHOUT = 1000;
-const int MAX_DIMENSION = 256;
-const int MAX_CHANNELS = 1000;
+const int MAX_NUM_LAYERS = 5;
+const int MAX_WEIGHTS_PER_LAYER = 224;
+const int MAX_IMAGE_CACHE_SIZE = 128;
+const int MAX_INPUT_PER_LAYER = 192;
+const int MAX_NUM_CHOUT = 10;
+const int MAX_DIMENSION = 8;
+const int MAX_CHANNELS = 10;
 
-const int TOTAL_NUM_WEIGHTS = 1577800;
-const int TOTAL_NUM_INPUTS = 3866624;
-const int TOTAL_NUM_OUTPUTS = 3663872;
-const int TOTAL_DRAM_IO = 9108296;
-
-const float TEST_RESULT_EXPECTED = 92.3337;
-const int DRAM_DEPTH = 7863424;
+const int TOTAL_NUM_WEIGHTS = 420;
+const int TOTAL_NUM_INPUTS = 512;
+const int TOTAL_NUM_OUTPUTS = 448;
+const int TOTAL_DRAM_IO = 1380;
 
 // Mean Pixel for ImageNet Data
 const float MEAN_R = 104;
 const float MEAN_G = 117;
 const float MEAN_B = 123;
+
+const int DRAM_DEPTH = 1049216;
+const float TEST_RESULT_EXPECTED = 23.32;
 
 // include after definitions to allow bit-width calculations
 #include "netconfig.hpp"

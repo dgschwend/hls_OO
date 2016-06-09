@@ -33,7 +33,7 @@ class MemoryController {
   void writeBackResult(data_t *globalPoolCache);
 
  private:
-  data_t *SHARED_DRAM;
+  data_t *const SHARED_DRAM;
   data_t *DRAM_DATA;
   data_t *DRAM_WEIGHTS;
   memaddr_t dram_weights_offset;

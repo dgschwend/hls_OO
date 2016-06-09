@@ -22,10 +22,15 @@
 // ==============
 // =  FPGA TOP  =
 // ==============
-
 void fpga_top(data_t *SHARED_DRAM, unsigned int num_layers,
               unsigned int weights_offset, unsigned int input_offset) {
-  LOG("FPGA TOP started.\n");
+#pragma HLS INTERFACE m_axi depth = DRAM_DEPTH port = SHARED_DRAM offset = \
+    direct bundle = memorybus
+#pragma HLS INTERFACE s_axilite register port = num_layers bundle = axilite
+#pragma HLS INTERFACE s_axilite register port = weights_offset bundle = axilite
+#pragma HLS INTERFACE s_axilite register port = input_offset bundle = axilite
+
+  printf("FPGA TOP started.\n");
   LOG_LEVEL++;
 
   // =============================
@@ -37,7 +42,7 @@ void fpga_top(data_t *SHARED_DRAM, unsigned int num_layers,
   WeightsCache WCache;
   OutputCache OCache("OCache");
   OutputCache GPoolCache("GPoolCache");
-  ProcessingElement PE[N_PE];
+  ProcessingElement PE;  //[N_PE];
 
   coordinate_t y, x;
   channel_t ci, co;
@@ -47,9 +52,8 @@ void fpga_top(data_t *SHARED_DRAM, unsigned int num_layers,
   LOG("Initial Module Setup:\n");
   LOG_LEVEL++;
   {
-    for (int i = 0; i < N_PE; i++) {
-      PE[i].setup(i, &ICache, &WCache, &OCache);
-    }
+    // Setup Processing Element
+    PE.setup(&ICache, &WCache, &OCache);
 
     // Setup Global Pooling Cache
     GPoolCache.reset();
@@ -73,9 +77,7 @@ L_LAYERS:
       ICache.setLayerConfig(layer);
       WCache.setLayerConfig(layer);
       DRAM.setLayerConfig(layer);
-      for (int i = 0; i < N_PE; i++) {
-        PE[i].setLayerConfig(layer);
-      }
+      PE.setLayerConfig(layer);
     }
     LOG_LEVEL--;
 
@@ -126,9 +128,7 @@ L_LAYERS:
             LOG("Start PEs for Pixel(%d,%d), input ch %d, all ouput ch\n",
                 (int)y, (int)x, (int)ci);
             LOG_LEVEL++;
-            for (int i = 0; i < N_PE; i++) {
-              PE[i].processInputChannel(y, x, ci);
-            }
+            { PE.processInputChannel(y, x, ci); }
             LOG_LEVEL--;
           }
           LOG_LEVEL--;
@@ -186,7 +186,9 @@ L_LAYERS:
 
   // Write Back final Result
   DRAM.writeBackResult(GPoolCache.BRAMPointer());
+
   LOG_LEVEL--;
+  printf("FPGA Top finished.\n");
 }
 
 // ===========

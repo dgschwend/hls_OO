@@ -17,8 +17,8 @@
 // =====================
 MemoryController::MemoryController(data_t *mempointer,
                                    unsigned int weights_offset,
-                                   unsigned int data_offset) {
-  SHARED_DRAM = mempointer;
+                                   unsigned int data_offset)
+    : SHARED_DRAM(mempointer) {
   DRAM_WEIGHTS = (SHARED_DRAM + weights_offset);
   DRAM_DATA = (SHARED_DRAM + data_offset);
 
@@ -38,6 +38,7 @@ void MemoryController::loadConfigViaFloatUnion(int num_layers,
   // Fetch Layer Configuration by Transferring floats + Converting to layer_t
   float floats[NUM_FLOATS_PER_LAYER];
   layer_t layer;
+L_LoadConfig:
   for (numlayers_t l = 0; l < num_layers; l++) {
     memcpy(floats, &SHARED_DRAM[l * NUM_FLOATS_PER_LAYER],
            NUM_FLOATS_PER_LAYER * sizeof(float));

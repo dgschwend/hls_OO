@@ -39,14 +39,16 @@ void ImageCache::preloadPixelFromDRAM(MemoryController *DRAM) {
 
   LOG_LEVEL++;
 
+L_PRELOAD_PIXEL_CHANNELS:
   for (channel_t ci = 0; ci < ch_in; ci++) {
     if (loads_left == 0) {
       LOG("ImageCache: NO MORE PIXELS LEFT IN DRAM\n");
-      break;
+      // break;
+    } else {
+      data_t px = DRAM->loadNextChannel();
+      setNextChannel(px);
+      loads_left--;
     }
-    data_t px = DRAM->loadNextChannel();
-    setNextChannel(px);
-    loads_left--;
   }
 
   LOG_LEVEL--;
@@ -58,6 +60,7 @@ void ImageCache::preloadRowFromDRAM(MemoryController *DRAM) {
 
   LOG_LEVEL++;
 
+L_DRAM_PRELOADROW_X:
   for (coordinate_t x = 0; x < width_in; x++) {
     preloadPixelFromDRAM(DRAM);
   }
