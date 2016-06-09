@@ -1,0 +1,41 @@
+net.outputs[-1] =  prob
+Inference took 0.023492 seconds ...
+shape of indata:  (3, 8, 8)
+Write to indata File...
+shape of conv1param:  (8, 3, 3, 3)
+conv1 (ci 0, co 0):
+[[ 0.18323541  0.27064869  0.12166593]
+ [-0.00870017 -0.30777204 -0.14183322]
+ [-0.08528727 -0.15731218 -0.0738126 ]]
+conv1 (ci 1, co 0):
+[[-0.06792808  0.30910429 -0.04301976]
+ [-0.04239216 -0.30682996  0.06860679]
+ [ 0.16456158 -0.32203087 -0.1608257 ]]
+conv1 (ci 2, co 0):
+[[ 0.25982377  0.19518396  0.3088257 ]
+ [ 0.13593368 -0.30905855 -0.33290255]
+ [-0.11064368  0.28053021 -0.07621129]]
+Write to conv1param File...
+shape of conv1 results:  (8, 4, 4)
+Write to conv1res File...
+shape of fire/squeeze1x1 results:  (2, 4, 4)
+Write to fs1 File...
+shape of fire/expand1x1 results:  (4, 4, 4)
+Write to fex1x1 File...
+shape of fire/expand3x3 results:  (4, 4, 4)
+Write to fex3x3 File...
+shape of fire/concat results:  (8, 4, 4)
+Write to fconcat File...
+shape of conv10 results:  (10, 4, 4)
+Write to conv10 File...
+shape of softmax results:  (10, 1, 1)
+Write to softmax File...
+output shape:  (1, 10, 1, 1)
+-------------------- Prediction for ../../puppy-500x350.jpg --------------------
+ 23.3238% - "Class #5"
+ 12.4478% - "Class #7"
+ 11.2384% - "Class #6"
+  9.9029% - "Class #1"
+  9.2870% - "Class #2"
+
+Script took 0.465770 seconds.

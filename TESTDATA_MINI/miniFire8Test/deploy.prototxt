@@ -1,0 +1,147 @@
+input: "data"
+input_shape {
+  dim: 1
+  dim: 3
+  dim: 8
+  dim: 8
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1.0
+  }
+  param {
+    lr_mult: 2.0
+  }
+  convolution_param {
+    engine: CAFFE
+    num_output: 8
+    pad: 1
+    kernel_size: 3
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layer {
+  name: "relu_conv1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "fire/squeeze1x1"
+  type: "Convolution"
+  bottom: "conv1"
+  top: "fire/squeeze1x1"
+  convolution_param {
+    engine: CAFFE
+    num_output: 2
+    kernel_size: 1
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layer {
+  name: "fire/relu_squeeze1x1"
+  type: "ReLU"
+  bottom: "fire/squeeze1x1"
+  top: "fire/squeeze1x1"
+}
+layer {
+  name: "fire/expand1x1"
+  type: "Convolution"
+  bottom: "fire/squeeze1x1"
+  top: "fire/expand1x1"
+  convolution_param {
+    engine: CAFFE
+    num_output: 4
+    kernel_size: 1
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layer {
+  name: "fire/relu_expand1x1"
+  type: "ReLU"
+  bottom: "fire/expand1x1"
+  top: "fire/expand1x1"
+}
+layer {
+  name: "fire/expand3x3"
+  type: "Convolution"
+  bottom: "fire/squeeze1x1"
+  top: "fire/expand3x3"
+  convolution_param {
+    engine: CAFFE
+    num_output: 4
+    pad: 1
+    kernel_size: 3
+    weight_filler {
+      type: "xavier"
+    }
+  }
+}
+layer {
+  name: "fire/relu_expand3x3"
+  type: "ReLU"
+  bottom: "fire/expand3x3"
+  top: "fire/expand3x3"
+}
+layer {
+  name: "fire/concat"
+  type: "Concat"
+  bottom: "fire/expand1x1"
+  bottom: "fire/expand3x3"
+  top: "fire/concat"
+}
+layer {
+  name: "conv10"
+  type: "Convolution"
+  bottom: "fire/concat"
+  top: "conv10"
+  param {
+    lr_mult: 1.0
+  }
+  param {
+    lr_mult: 2.0
+  }
+  convolution_param {
+    engine: CAFFE
+    num_output: 10
+    kernel_size: 1
+    weight_filler {
+      type: "gaussian"
+      mean: 0.0
+      std: 0.01
+    }
+  }
+}
+layer {
+  name: "relu_conv10"
+  type: "ReLU"
+  bottom: "conv10"
+  top: "conv10"
+}
+layer {
+  name: "pool10"
+  type: "Pooling"
+  bottom: "conv10"
+  top: "pool10"
+  pooling_param {
+    pool: AVE
+    global_pooling: true
+  }
+}
+layer {
+  name: "prob"
+  type: "Softmax"
+  bottom: "pool10"
+  top: "prob"
+}
