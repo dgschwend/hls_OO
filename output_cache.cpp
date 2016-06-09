@@ -15,7 +15,12 @@
 // ================
 // = Output Cache =
 // ================
-OutputCache::OutputCache(const char *name) : _name(name){};
+#ifdef EBUG
+  OutputCache::OutputCache(const char *name) : _name(name){};
+#else
+  OutputCache::OutputCache(const char *name) {};
+#endif
+
 void OutputCache::accumulateChannel(channel_t c, data_t value_to_add) {
   data_t old_ch = BRAM[c];
   data_t new_ch = old_ch + value_to_add;

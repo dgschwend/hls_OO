@@ -21,7 +21,7 @@
 // ================
 class OutputCache {
  public:
-  OutputCache(const char *name = "OutputCache");
+  OutputCache(const char* name = "OutputCache");
   void accumulateChannel(channel_t c, data_t data);
   data_t getChannel(channel_t c);
   void setChannel(channel_t c, data_t data);
@@ -29,7 +29,9 @@ class OutputCache {
   data_t *BRAMPointer() { return BRAM; }
 
  private:
+#ifdef EBUG
   const char *_name;  // for debugging / logging
+#endif
   data_t BRAM[MAX_NUM_CHOUT];
 };
 
