@@ -1,5 +1,5 @@
-#ifndef _UNITTESTS_H_
-#define _UNITTESTS_H_
+#ifndef UNITTESTS_HPP_A9B1CEAB
+#define UNITTESTS_HPP_A9B1CEAB
 
 // ========================
 // = Standard C Libraries =
@@ -22,7 +22,6 @@
 // ==============
 // = Unit Tests =
 // ==============
-
 bool do_unittests();
 
-#endif
+#endif /* end of include guard: UNITTESTS_HPP_A9B1CEAB */

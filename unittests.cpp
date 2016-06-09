@@ -1,5 +1,14 @@
 #include "unittests.hpp"
 
+// ================
+// = FPGA Modules =
+// ================
+#include "memory_controller.hpp"
+#include "weights_cache.hpp"
+#include "image_cache.hpp"
+#include "output_cache.hpp"
+#include "processing_element.hpp"
+
 // =============================
 // = ACTIVATION / DEACTIVATION =
 // =============================
