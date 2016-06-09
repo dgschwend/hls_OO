@@ -1,11 +1,21 @@
+//------------------------------------------------------------------------------
+//  SqueezeNetOnFPGA
+//------------------------------------------------------------------------------
+//
+//	File:  unittests.cpp
+//
+//  Unit Tests for FPGA Modules
+//
+//	(c) David Gschwend, 2016
+//
+//------------------------------------------------------------------------------
+
 #include "unittests.hpp"
 
-// ================
-// = FPGA Modules =
-// ================
+// FPGA Modules
 #include "memory_controller.hpp"
-#include "weights_cache.hpp"
 #include "image_cache.hpp"
+#include "weights_cache.hpp"
 #include "output_cache.hpp"
 #include "processing_element.hpp"
 
@@ -484,9 +494,12 @@ bool test_OutputCache() {
   return success;
 }
 
-bool do_unittests() {  
+// =========================
+// = Main UnitTests Runner =
+// =========================
+bool do_unittests() {
   if (!DO_UNITTESTS) return true;
-  
+
   bool success = true;
   printf("Execute Unit Tests on FPGA Modules...\n");
 

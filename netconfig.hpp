@@ -2,7 +2,7 @@
 //  SqueezeNetOnFPGA
 //------------------------------------------------------------------------------
 //
-//	File:  netconfig.h
+//	File:  netconfig.hpp
 //
 //  Declaration of <layer_t> and <network_t> structs that hold configuration.
 //
@@ -50,8 +50,8 @@ typedef ap_uint<NBITS(MAX_WEIGHTS_PER_LAYER)> weightaddr_t;
 typedef ap_uint<NBITS(MAX_NUM_LAYERS)> numlayers_t;    // saves number of layers
 typedef ap_uint<NBITS(MAX_NUM_LAYERS - 1)> layerid_t;  // counts to num_layers-1
 typedef ap_uint<23> memaddr_t;  // must remain <= 23 bits to fit into float
-typedef ap_uint<2> kernel_t;  // =1 or =3
-typedef ap_uint<2> stride_t;  // =1 or =2
+typedef ap_uint<2> kernel_t;    // =1 or =3
+typedef ap_uint<2> stride_t;    // =1 or =2
 typedef float data_t;
 
 typedef enum {

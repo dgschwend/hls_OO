@@ -12,27 +12,17 @@
 
 #include "fpga_top.hpp"
 
-// ================
-// = FPGA Modules =
-// ================
+// FPGA Modules
 #include "memory_controller.hpp"
-#include "weights_cache.hpp"
 #include "image_cache.hpp"
+#include "weights_cache.hpp"
 #include "output_cache.hpp"
 #include "processing_element.hpp"
-
-bool LOG_DETAILS = false;
-int LOG_LEVEL = 0;
-void print_indent(int lvl) {
-  while (lvl--) {
-    putchar(' ');
-    putchar(' ');
-  }
-}
 
 // ==============
 // =  FPGA TOP  =
 // ==============
+
 void fpga_top(data_t *SHARED_DRAM, unsigned int num_layers,
               unsigned int weights_offset, unsigned int input_offset) {
   LOG("FPGA TOP started.\n");
@@ -197,4 +187,16 @@ L_LAYERS:
   // Write Back final Result
   DRAM.writeBackResult(GPoolCache.BRAMPointer());
   LOG_LEVEL--;
+}
+
+// ===========
+// = LOGGING =
+// ===========
+bool LOG_DETAILS = false;
+int LOG_LEVEL = 0;
+void print_indent(int lvl) {
+  while (lvl--) {
+    putchar(' ');
+    putchar(' ');
+  }
 }

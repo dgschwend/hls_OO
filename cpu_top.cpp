@@ -1,3 +1,15 @@
+//------------------------------------------------------------------------------
+//  SqueezeNetOnFPGA
+//------------------------------------------------------------------------------
+//
+//	File:  cpu_top.cpp
+//
+//  CPU-Side Functions for SqueezeNetOnFPGA
+//
+//	(c) David Gschwend, 2016
+//
+//------------------------------------------------------------------------------
+
 #include "cpu_top.hpp"
 
 // ======================================
@@ -9,6 +21,124 @@ char *SHARED_DRAM;
 float *SHARED_DRAM_LAYER_CONFIG;
 data_t *SHARED_DRAM_WEIGHTS;
 data_t *SHARED_DRAM_DATA;
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+// =================
+// = Main Function =
+// =================
+
+int main() {
+  LOG_LEVEL = 0;
+
+  // ==============
+  // = Unit Tests =
+  // ==============
+  if (!do_unittests()) {
+    printf("UNIT TESTS FAILED, ABORTING.");
+    return -1;
+  };
+
+  // =================
+  // = Setup Network =
+  // =================
+  // Generate + Load Network Config from network.hpp/network.cpp
+  network_t *net_CPU;
+  net_CPU = get_network_config();
+
+  // Assert that layer_t fits into a multiple of bus transactions:
+  // ONLY NECESSARY IF WE CAN MAP LAYER_T TRANSFER ONTO BUS_T AXI MASTER
+  // printf("size of layer_t: %d, size of bus_t: %d", (int)sizeof(layer_t),
+  //       (int)sizeof(bus_t));
+  // assert((sizeof(layer_t) % sizeof(bus_t) == 0) &&
+  //       "layert_t is not multiple of bus size. adjust size of
+  //       layer_t.dummy!");
+
+  // ==========================
+  // = Setup FPGA Accelerator =
+  // ==========================
+  // Allocate Shared Memory for Config, Weights, Data.
+  // Copy Layer Config + Weights to FPGA.
+  setup_FPGA(net_CPU);
+
+  // ===========================
+  // = Load + Copy Input Image =
+  // ===========================
+  /* Structured: generate_structured_input_image(input_image,win,hin,chin);
+   PseudoRandom: generate_random_input_image(input_image, win, hin, chin, 1);
+   ReallyRandom: generate_random_input_image(input_image, win, hin, chin -1);
+   Prepared Input File (convert_image.py):
+   load_prepared_input_image(input_image, "./indata.bin", win, hin, chin);
+   JPG/PNG Input File (!not implemented!):
+   load_image_file(input_image, "./puppy-500x350.jpg", win, hin, chin);
+   do_preprocess(input_image, win, hin, chin); */
+
+  // Allocate Memory on CPU Side:
+  layer_t layer0 = net_CPU->layers[0];
+  int win = layer0.width;
+  int hin = layer0.height;
+  int chin = layer0.channels_in;
+  data_t *input_image = (data_t *)malloc(win * hin * chin * sizeof(data_t));
+
+  // Load Input Image
+  load_prepared_input_image(input_image, "./indata.bin", win, hin, chin);
+
+  // Copy onto FPGA
+  copy_input_image_to_FPGA(net_CPU, input_image);
+
+  // ============================
+  // = Execute FPGA Accelerator =
+  // ============================
+  int weights_offset =
+      ((long)SHARED_DRAM_WEIGHTS - (long)SHARED_DRAM) / sizeof(data_t);
+  int input_offset =
+      ((long)SHARED_DRAM_DATA - (long)SHARED_DRAM) / sizeof(data_t);
+  printf("SHARED_DRAM is at address: %lu\n", (long)SHARED_DRAM);
+  fpga_top((data_t *)SHARED_DRAM, net_CPU->num_layers, weights_offset,
+           input_offset);
+
+  LOG_LEVEL = 0;
+
+  // ===============================
+  // = Copy Results back from FPGA =
+  // ===============================
+  int ch_out = net_CPU->layers[net_CPU->num_layers - 1].channels_out;
+  data_t *results = (data_t *)malloc(ch_out * sizeof(data_t));
+  copy_results_from_FPGA(net_CPU, results, ch_out);
+
+  // =====================
+  // = Calculate Softmax =
+  // =====================
+  std::vector<std::pair<data_t, int> > probabilities(ch_out);
+  calculate_softmax(net_CPU, results, probabilities);
+
+  // ==================
+  // = Report Results =
+  // ==================
+  printf("\nResult (top-5):\n====================\n");
+  for (int i = 0; i < std::min(5, ch_out); i++) {
+    printf("    %5.2f%%: class %3d (output %6.2f)\n",
+           100 * probabilities[i].first, probabilities[i].second,
+           results[probabilities[i].second]);
+  }
+
+  // ====================
+  // = TestBench Result =
+  // ====================
+  // Check if output is 93.50% (+- 0.1%)
+  // if (fabs(100 * probabilities[0].first - 93.50) < 0.1) {
+  if (fabs(100 * probabilities[0].first - TEST_RESULT_EXPECTED) < 0.1) {
+    printf("\nTestBench Result: SUCCESS\n");
+    return 0;
+  } else {
+    printf("\nTestBench Result: FAILURE\n");
+    return -1;
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 // ==============================================
 // = Allocate Memory Regions for Data + Weights =
@@ -284,116 +414,4 @@ void setup_FPGA(network_t *net_CPU) {
 
   // Copy Network Config (Layer Config, Weights)
   copy_config_to_FPGA(net_CPU);
-}
-
-// =================
-// = Main Function =
-// =================
-
-int main() {
-  LOG_LEVEL = 0;
-
-  // ==============
-  // = Unit Tests =
-  // ==============
-  if (!do_unittests()) {
-    printf("UNIT TESTS FAILED, ABORTING.");
-    return -1;
-  };
-
-  // =================
-  // = Setup Network =
-  // =================
-  // Generate + Load Network Config from network.hpp/network.cpp
-  network_t *net_CPU;
-  net_CPU = get_network_config();
-
-  // Assert that layer_t fits into a multiple of bus transactions:
-  // ONLY NECESSARY IF WE CAN MAP LAYER_T TRANSFER ONTO BUS_T AXI MASTER
-  // printf("size of layer_t: %d, size of bus_t: %d", (int)sizeof(layer_t),
-  //       (int)sizeof(bus_t));
-  // assert((sizeof(layer_t) % sizeof(bus_t) == 0) &&
-  //       "layert_t is not multiple of bus size. adjust size of
-  //       layer_t.dummy!");
-
-  // ==========================
-  // = Setup FPGA Accelerator =
-  // ==========================
-  // Allocate Shared Memory for Config, Weights, Data.
-  // Copy Layer Config + Weights to FPGA.
-  setup_FPGA(net_CPU);
-
-  // ===========================
-  // = Load + Copy Input Image =
-  // ===========================
-  /* Structured: generate_structured_input_image(input_image,win,hin,chin);
-   PseudoRandom: generate_random_input_image(input_image, win, hin, chin, 1);
-   ReallyRandom: generate_random_input_image(input_image, win, hin, chin -1);
-   Prepared Input File (convert_image.py):
-   load_prepared_input_image(input_image, "./indata.bin", win, hin, chin);
-   JPG/PNG Input File (!not implemented!):
-   load_image_file(input_image, "./puppy-500x350.jpg", win, hin, chin);
-   do_preprocess(input_image, win, hin, chin); */
-
-  // Allocate Memory on CPU Side:
-  layer_t layer0 = net_CPU->layers[0];
-  int win = layer0.width;
-  int hin = layer0.height;
-  int chin = layer0.channels_in;
-  data_t *input_image = (data_t *)malloc(win * hin * chin * sizeof(data_t));
-
-  // Load Input Image
-  load_prepared_input_image(input_image, "./indata.bin", win, hin, chin);
-
-  // Copy onto FPGA
-  copy_input_image_to_FPGA(net_CPU, input_image);
-
-  // ============================
-  // = Execute FPGA Accelerator =
-  // ============================
-  int weights_offset =
-      ((long)SHARED_DRAM_WEIGHTS - (long)SHARED_DRAM) / sizeof(data_t);
-  int input_offset =
-      ((long)SHARED_DRAM_DATA - (long)SHARED_DRAM) / sizeof(data_t);
-  printf("SHARED_DRAM is at address: %lu\n", (long)SHARED_DRAM);
-  fpga_top((data_t *)SHARED_DRAM, net_CPU->num_layers, weights_offset,
-           input_offset);
-
-  LOG_LEVEL = 0;
-
-  // ===============================
-  // = Copy Results back from FPGA =
-  // ===============================
-  int ch_out = net_CPU->layers[net_CPU->num_layers - 1].channels_out;
-  data_t *results = (data_t *)malloc(ch_out * sizeof(data_t));
-  copy_results_from_FPGA(net_CPU, results, ch_out);
-
-  // =====================
-  // = Calculate Softmax =
-  // =====================
-  std::vector<std::pair<data_t, int> > probabilities(ch_out);
-  calculate_softmax(net_CPU, results, probabilities);
-
-  // ==================
-  // = Report Results =
-  // ==================
-  printf("\nResult (top-5):\n====================\n");
-  for (int i = 0; i < std::min(5, ch_out); i++) {
-    printf("    %5.2f%%: class %3d (output %6.2f)\n",
-           100 * probabilities[i].first, probabilities[i].second,
-           results[probabilities[i].second]);
-  }
-
-  // ====================
-  // = TestBench Result =
-  // ====================
-  // Check if output is 93.50% (+- 0.1%)
-  // if (fabs(100 * probabilities[0].first - 93.50) < 0.1) {
-  if (fabs(100 * probabilities[0].first - TEST_RESULT_EXPECTED) < 0.1) {
-    printf("\nTestBench Result: SUCCESS\n");
-    return 0;
-  } else {
-    printf("\nTestBench Result: FAILURE\n");
-    return -1;
-  }
 }

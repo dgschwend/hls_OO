@@ -1,8 +1,20 @@
+//------------------------------------------------------------------------------
+//  SqueezeNetOnFPGA
+//------------------------------------------------------------------------------
+//
+//	File:  output_cache.hpp
+//
+//  Output Cache Module for FPGA
+//
+//	(c) David Gschwend, 2016
+//
+//------------------------------------------------------------------------------
+
 #ifndef OUTPUT_CACHE_HPP_07571FC2
 #define OUTPUT_CACHE_HPP_07571FC2
 
 // Data Types for FPGA Implementation
-#include "fpga_top.hpp" 
+#include "fpga_top.hpp"
 
 // ================
 // = Output Cache =

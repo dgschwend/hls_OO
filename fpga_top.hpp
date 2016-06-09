@@ -4,7 +4,7 @@
 //
 //	File:  fpga_top.hpp
 //
-//  Top-Level Module for SqueezeNetOnFGPA.
+//  Top-Level Module for SqueezeNetOnFGPA (Header File)
 //
 //	(c) David Gschwend, 2016
 //
@@ -13,39 +13,36 @@
 #ifndef _FPGA_TOP_H_
 #define _FPGA_TOP_H_
 
-// Standard Libraries
 #include <cassert>
 #include <cmath>
-
-// Xilinx FPGA Specific
 #include "ap_int.h"
+
 #ifdef __SYNTHESIS__
 #include <ap_utils.h>
 #include <hls_math.h>
 #endif
 
-// Network Configuration (always include "network.hpp" first!)
+// Network Configuration + Data Types + Constants
 #include "network.hpp"
 #include "netconfig.hpp"
 
 // ==========================
 // = Architecture Constants =
 // ==========================
-
-// Number of ImageCache Lines
+// Number of Image Cache Lines (need 3, might chose 4 just because it's nicer)
 const int NUM_IMG_CACHE_LINES = 3;
-
 // Number of Processing Elements
 const int N_PE = 1;
 
 // ====================
-// = Type Definitions = (Architecture-specific)
+// = Type Definitions =
 // ====================
 typedef ap_uint<2> cacheline_t;  // cache height = 4 lines
 typedef ap_uint<NBITS(MAX_INPUT_PER_LAYER)> imgdramoffset_t;
 typedef ap_uint<NBITS(MAX_IMAGE_CACHE_SIZE)> imgcacheaddr_t;
 typedef ap_uint<NBITS(MAX_IMAGE_CACHE_SIZE / 4)> pixelperrow_t;
 typedef ap_uint<4> numfilterelems_t;  // either =1 or =9
+
 typedef ap_int<NBITS(MAX_DIMENSION) + 2> coordinate_t;
 // coordinates run worst-case from -1 ... +W or +H
 // -> need bits for (W or H) + 1 bit more for signed + 1 bit more for +H / +W
@@ -60,9 +57,10 @@ void fpga_top(data_t *SHARED_DRAM, unsigned int num_layers,
 // ================================
 // = Debugging Output (Helper Fn) =
 // ================================
-// debug mode: gcc -DEBUG
-extern int LOG_LEVEL; extern bool LOG_DETAILS; // defined in fpga_top.cpp
-extern void print_indent(int lvl);
+// debug mode, -DEBUG
+extern int LOG_LEVEL;
+extern bool LOG_DETAILS;
+void print_indent(int lvl);
 
 #if defined(EBUG) && !defined(__SYNTHESIS__)
 #define FNAME() \

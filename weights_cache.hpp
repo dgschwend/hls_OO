@@ -1,8 +1,20 @@
+//------------------------------------------------------------------------------
+//  SqueezeNetOnFPGA
+//------------------------------------------------------------------------------
+//
+//	File:  weights_cache.hpp
+//
+//  Weights Cache Module for FPGA
+//
+//	(c) David Gschwend, 2016
+//
+//------------------------------------------------------------------------------
+
 #ifndef WEIGHTS_CACHE_HPP_E36181B8
 #define WEIGHTS_CACHE_HPP_E36181B8
 
 // Data Types for FPGA Implementation
-#include "fpga_top.hpp" 
+#include "fpga_top.hpp"
 
 #include "memory_controller.hpp"
 

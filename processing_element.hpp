@@ -1,8 +1,20 @@
+//------------------------------------------------------------------------------
+//  SqueezeNetOnFPGA
+//------------------------------------------------------------------------------
+//
+//	File:  processing_element.hpp
+//
+//  Processing (MACC) Module for FPGA
+//
+//	(c) David Gschwend, 2016
+//
+//------------------------------------------------------------------------------
+
 #ifndef PROCESSING_ELEMENT_HPP_C609EBE9
 #define PROCESSING_ELEMENT_HPP_C609EBE9
 
 // Data Types for FPGA Implementation
-#include "fpga_top.hpp" 
+#include "fpga_top.hpp"
 
 #include "image_cache.hpp"
 #include "weights_cache.hpp"

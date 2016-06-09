@@ -1,3 +1,15 @@
+//------------------------------------------------------------------------------
+//  SqueezeNetOnFPGA
+//------------------------------------------------------------------------------
+//
+//	File:  cpu_top.hpp
+//
+//  CPU-Side Functions for SqueezeNetOnFPGA
+//
+//	(c) David Gschwend, 2016
+//
+//------------------------------------------------------------------------------
+
 #ifndef _FPGA_SIMULATOR_H_
 #define _FPGA_SIMULATOR_H_
 
@@ -25,5 +37,26 @@
 // = FPGA Algorithm =
 // ==================
 #include "fpga_top.hpp"  // top-level FPGA module
+
+// ===========================================
+// = CPU-Side Functions for SqueezeNetOnFPGA =
+// ===========================================
+void allocate_FPGA_memory(network_t *net_CPU);
+void copy_config_to_FPGA(network_t *net_CPU);
+void load_prepared_input_image(data_t *input_image, const char *filename,
+                               int win, int hin, int chin);
+void copy_input_image_to_FPGA(network_t *net_CPU, data_t *image);
+void copy_results_from_FPGA(network_t *net_CPU, data_t *results, int ch_out);
+void calculate_softmax(network_t *net_CPU, data_t *results,
+                       std::vector<std::pair<data_t, int> > &probabilities);
+void generate_structured_input_image(data_t *input_image, int win, int hin,
+                                     int chin);
+void generate_random_input_image(data_t *input_image, int win, int hin,
+                                 int chin, int seed);
+void load_image_file(data_t *input_image, const char *filename, int win,
+                     int hin, int chin);
+void do_preprocess(data_t *input_image, int win, int hin, int chin);
+void setup_FPGA(network_t *net_CPU);
+int main();
 
 #endif

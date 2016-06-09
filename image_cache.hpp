@@ -1,8 +1,20 @@
+//------------------------------------------------------------------------------
+//  SqueezeNetOnFPGA
+//------------------------------------------------------------------------------
+//
+//	File:  image_cache.hpp
+//
+//  Image Cache Module for FPGA
+//
+//	(c) David Gschwend, 2016
+//
+//------------------------------------------------------------------------------
+
 #ifndef IMAGE_CACHE_HPP_94D645A0
 #define IMAGE_CACHE_HPP_94D645A0
 
 // Data Types for FPGA Implementation
-#include "fpga_top.hpp" 
+#include "fpga_top.hpp"
 
 #include "memory_controller.hpp"
 
