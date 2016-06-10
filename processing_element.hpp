@@ -34,7 +34,7 @@ class ProcessingElement {
   void preloadPixels(coordinate_t y_in, coordinate_t x_in, channel_t ci,
                      data_t buffer[9]);
   void processAllCHout(data_t pixels[9]);
-  data_t macc2d(data_t pixels[9], data_t weights[9]);
+  void macc2d(data_t pixels[9], data_t weights[9], data_t& result);
   ImageCache *ICache;
   WeightsCache *WCache;
   OutputCache *OCache;

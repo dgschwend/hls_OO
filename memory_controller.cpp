@@ -135,6 +135,7 @@ void MemoryController::writeBackOutputPixel(coordinate_t y_out,
   LOG_LEVEL++;
 L_writeBackOutputPixel:
   for (channel_t co = 0; co < ch_out; co++) {
+#pragma HLS pipeline
     DRAM_PX_OUT[co] = outputCache[co];
     LOG(" WB ch%d (@%luB): %6.2f\n", (int)co,
         ((long)(DRAM_PX_OUT + co) - (long)DRAM_DATA), outputCache[co]);
@@ -145,6 +146,7 @@ L_writeBackOutputPixel:
 void MemoryController::writeBackResult(data_t *globalPoolCache) {
 L_writeBackResult:
   for (int i = 0; i < ch_out; i++) {  // ch_out set from last layer
+#pragma HLS pipeline
     DRAM_DATA[i] = globalPoolCache[i];
   }
   LOG("MemoryCtrl: writeBackResult (%d Bytes) to DRAM @0\n",

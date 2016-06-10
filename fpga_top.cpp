@@ -118,6 +118,8 @@ L_LAYERS:
       // Input Channel Loop
       L_CH_IN:
         for (ci = 0; ci < layer.channels_in; ci++) {
+#pragma HLS pipeline
+
           LOG("CI = %d:\n", (int)ci);
           LOG_LEVEL++;
           {
@@ -152,6 +154,7 @@ L_LAYERS:
           LOG_LEVEL++;
 
 #pragma HLS pipeline
+
           // Read output channel from Cache
           raw = OCache.getChannel(co);
           // Add Bias

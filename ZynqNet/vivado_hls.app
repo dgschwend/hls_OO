@@ -1,8 +1,8 @@
 <project xmlns="com.autoesl.autopilot.project" top="fpga_top" parsingAllHeaderFiles="true" name="ZynqNet">
     <includePaths/>
     <libraryPaths/>
-    <Simulation>
-        <SimFlow name="csim" optimizeCompile="true" clean="true" csimMode="0" lastCsimMode="0"/>
+    <Simulation argv="">
+        <SimFlow name="csim" optimizeCompile="false" clean="true" csimMode="0" lastCsimMode="0" setup="false" ldflags="" mflags=""/>
     </Simulation>
     <files xmlns="">
         <file name="../../weights.bin" sc="0" tb="1" cflags=" "/>

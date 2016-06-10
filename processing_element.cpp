@@ -43,6 +43,8 @@ void ProcessingElement::preloadPixels(coordinate_t y_center,
                                       data_t buffer[9]) {
   LOG("PE: preloadPixels (y_center: %2d, x_center: %2d, ci: %2d)\n",
       (int)y_center, (int)x_center, (int)ci);
+      
+#pragma HLS pipeline
 
 L_PE_LOADPIXEL_Y:
   for (int k = 0; k < 3; k++) {
@@ -68,7 +70,7 @@ void ProcessingElement::processInputChannel(coordinate_t y, coordinate_t x,
   LOG("PE: processInputChannel (y: %2d, x: %2d, ci: %2d)\n", (int)y, (int)x,
       (int)ci);
   LOG_LEVEL++;
-#pragma HLS DATAFLOW
+  //#pragma HLS DATAFLOW
   data_t pixel_buffer[9];
   preloadPixels(y, x, ci, pixel_buffer);
   processAllCHout(pixel_buffer);
@@ -78,19 +80,22 @@ void ProcessingElement::processInputChannel(coordinate_t y, coordinate_t x,
 void ProcessingElement::processAllCHout(data_t pixels[9]) {
   LOG("PE: processAllCHout\n");
   LOG_LEVEL++;
+  
+#pragma HLS DATAFLOW
 
   data_t weights_local[9];
   data_t result;
+  
 L_CH_OUT:
   for (channel_t co = 0; co < ch_out; co++) {
-#pragma HLS unroll factor = 8
+    //#pragma HLS unroll factor = 8
     LOG(" - process output channel %d\n", (int)co);
     LOG_LEVEL++;
     {
       // fetch weights
       WCache->getNineWeights(co, weights_local);
       // multiply-accumulate
-      result = macc2d(pixels, weights_local);
+      macc2d(pixels, weights_local, result);
       // save result to Output Buffer
       OCache->accumulateChannel(co, result);
     }
@@ -99,13 +104,15 @@ L_CH_OUT:
   LOG_LEVEL--;
 }
 
-data_t ProcessingElement::macc2d(data_t pixels[9], data_t weights[9]) {
+void ProcessingElement::macc2d(data_t pixels[9], data_t weights[9], data_t &result) {
+  
   data_t multresult[9];
 L_MACC_multiply:
   for (int i = 0; i < 9; i++) {
 #pragma HLS unroll
     multresult[i] = pixels[i] * weights[i];
   }
+  
   data_t accumulator = 0.00;
 L_MACC_accumulate:
   for (int i = 0; i < 9; i++) {
@@ -127,5 +134,5 @@ L_MACC_accumulate:
   }
   LOG("PE: macc2D -> %.2f \n", accumulator);
 
-  return accumulator;
+  result = accumulator;
 }
