@@ -30,7 +30,7 @@
 // = Architecture Constants =
 // ==========================
 // Number of Image Cache Lines (need 3, might chose 4 just because it's nicer)
-const int NUM_IMG_CACHE_LINES = 3;
+const int NUM_IMG_CACHE_LINES = 4;
 // Number of Processing Elements
 const int N_PE = 1;
 
@@ -75,6 +75,8 @@ void print_indent(int lvl);
     print_indent(LOG_LEVEL); \
     printf(__VA_ARGS__);     \
   }
+#define LOG_LEVEL_INCR LOG_LEVEL++
+#define LOG_LEVEL_DECR LOG_LEVEL--
 #else
 #define FNAME() \
   do {          \
@@ -83,8 +85,11 @@ void print_indent(int lvl);
   do {           \
   } while (0)
 #define LOG(...) \
-  do {           \
-  } while (0)
+  {}
+#define LOG_LEVEL_INCR \
+  {}
+#define LOG_LEVEL_DECR \
+  {}
 #endif  // EBUG
 
 // ===================================================================

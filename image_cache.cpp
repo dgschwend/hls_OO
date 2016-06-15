@@ -35,12 +35,16 @@ void ImageCache::setNextChannel(data_t value) {
 }
 
 void ImageCache::preloadPixelFromDRAM(MemoryController *DRAM) {
+#pragma HLS inline
   LOG("ImageCache: preloadPixelFromDRAM (%2d channels)\n", (int)ch_in);
 
-  LOG_LEVEL++;
+  LOG_LEVEL_INCR;
 
 L_PRELOAD_PIXEL_CHANNELS:
   for (channel_t ci = 0; ci < ch_in; ci++) {
+#pragma HLS LOOP_TRIPCOUNT min=3 max=1024 avg=237
+#pragma HLS pipeline II=1 rewind
+
     if (loads_left == 0) {
       LOG("ImageCache: NO MORE PIXELS LEFT IN DRAM\n");
       // break;
@@ -51,21 +55,23 @@ L_PRELOAD_PIXEL_CHANNELS:
     }
   }
 
-  LOG_LEVEL--;
+  LOG_LEVEL_DECR;
 }
 
 void ImageCache::preloadRowFromDRAM(MemoryController *DRAM) {
+#pragma HLS inline off
   LOG("ImageCache: preloadRowFromDRAM (%2d pixels, each %2d channels)\n",
       (int)width_in, (int)ch_in);
 
-  LOG_LEVEL++;
+  LOG_LEVEL_INCR;
 
 L_DRAM_PRELOADROW_X:
   for (coordinate_t x = 0; x < width_in; x++) {
+#pragma HLS LOOP_TRIPCOUNT min=8 max=256 avg=45
     preloadPixelFromDRAM(DRAM);
   }
 
-  LOG_LEVEL--;
+  LOG_LEVEL_DECR;
 }
 
 void ImageCache::setLayerConfig(layer_t &layer) {
@@ -85,16 +91,16 @@ void ImageCache::setLayerConfig(layer_t &layer) {
 }
 
 data_t ImageCache::getPixel(coordinate_t y, coordinate_t x, channel_t ci) {
-  assert((x >= 0) & (x < width_in) && "ImageCache: ILLEGAL PIXEL REQUESTED");
+  assert(((x >= 0) & (x < width_in)) && "ImageCache: ILLEGAL PIXEL REQUESTED");
 
   cacheline_t req_line = (y) % NUM_IMG_CACHE_LINES;
   imgcacheaddr_t addr = req_line * width_in * ch_in + x * ch_in + ci;
 
-  if (LOG_DETAILS)
+  /*if (LOG_DETAILS)
     LOG(
         "ImageCache: getPixel( y: %d, x: %d, ci: %d ) "
         "= ICACHE[%3d] (cache line %d) -> %.2f\n",
-        (int)y, (int)x, (int)ci, (int)addr, (int)req_line, BRAM[addr]);
+        (int)y, (int)x, (int)ci, (int)addr, (int)req_line, BRAM[addr]);*/
 
   return BRAM[addr];
 }

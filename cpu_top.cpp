@@ -126,8 +126,7 @@ int main() {
   // ====================
   // = TestBench Result =
   // ====================
-  // Check if output is 93.50% (+- 0.1%)
-  // if (fabs(100 * probabilities[0].first - 93.50) < 0.1) {
+  // Check if output is AS EXPECTED (+- 0.1%) (defined in network.hpp)
   if (fabs(100 * probabilities[0].first - TEST_RESULT_EXPECTED) < 0.1) {
     printf("\nTestBench Result: SUCCESS\n");
     return 0;

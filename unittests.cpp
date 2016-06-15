@@ -22,7 +22,7 @@
 // =============================
 // = ACTIVATION / DEACTIVATION =
 // =============================
-const bool DO_UNITTESTS = true;
+#define DO_UNITTESTS 0
 
 // ==================
 // = Test Functions =
@@ -59,6 +59,7 @@ bool expect_equal_check(float acquired, T expected, const char* fn,
   return expect_equal_check((double)acquired, expected, fn, file, line);
 }
 
+#if DO_UNITTESTS
 // =====================
 // = Memory Controller =
 // =====================
@@ -510,3 +511,6 @@ bool do_unittests() {
 
   return success;
 }
+#else
+bool do_unittests() {return true;}
+#endif

@@ -26,7 +26,7 @@ class OutputCache {
   data_t getChannel(channel_t c);
   void setChannel(channel_t c, data_t data);
   void reset();
-  data_t *BRAMPointer() { return BRAM; }
+  //data_t *BRAMPointer() { return BRAM; }
 
  private:
 #ifdef EBUG

@@ -15,7 +15,6 @@
 
 // Data Types for FPGA Implementation
 #include "fpga_top.hpp"
-
 #include "memory_controller.hpp"
 
 // =================
@@ -30,10 +29,9 @@ class WeightsCache {
   void setInputChannel(channel_t ci);
   void getNineWeights(channel_t co, data_t wbuffer[9]);
   data_t getOneWeight(channel_t co);
-  data_t *BRAMPointer();
-  void print_setup();
 
  private:
+  data_t getWeight(const weightaddr_t addr);
   weightaddr_t write_addr;
   data_t BRAM[MAX_WEIGHTS_PER_LAYER];
   kernel_t kernel;

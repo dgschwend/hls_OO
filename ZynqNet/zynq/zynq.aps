@@ -1,10 +1,16 @@
 <solution AutoPilot="com.autoesl.autopilot.solution">
+    <downStreamTool>
+        <DownStreamTool name="vivado"/>
+    </downStreamTool>
+    <clockList>
+        <clock default="false" name="default" period="5"/>
+    </clockList>
     <config>
-        <config_rtl encoding="auto" header="" prefix="" reset="control" reset_async="0" reset_level="high"/>
+        <schedule model="fpga_top"/>
+        <config_rtl encoding="auto" header="" prefix="" reset="control" reset_async="1" reset_level="low"/>
         <config_compile name_max_length="60" no_signed_zeros="1" pipeline_loops="0" unsafe_math_optimizations="1"/>
         <config_dataflow default_channel="pingpong" fifo_depth="0"/>
         <config_interface clock_enable="0" expose_global="0" m_axi_addr64="0" m_axi_offset="direct" register_io="scalar_all" trim_dangling_port="1"/>
-        <schedule model="fpga_top"/>
     </config>
     <UIConfigurations>
         <UIAutosynConf hideTrivialOp="true" isBasedOnBoard="false" isSolutionDirty="false" isStopAskAgain="false" showDetailDesignViewer="false">
@@ -44,19 +50,13 @@
         <Format formatName="syn_dcp"/>
         <Format formatName="pcore" use_netlist="none"/>
     </ExportDesign>
-    <Simulation>
-        <SimFlow askAgain="true" dumpTrace="port" name="cosim" optimizeCompile="true" reduce_diskspace="false" setup="false" toolName="Auto">
+    <Simulation argv="">
+        <SimFlow askAgain="true" dumpTrace="port" name="cosim" optimizeCompile="true" reduce_diskspace="false" setup="false" toolName="auto" ldflags="" mflags="" compiledLibrary="">
             <Rtl active="false" name="systemc"/>
             <Rtl active="false" name="verilog"/>
             <Rtl active="true" name="vhdl"/>
         </SimFlow>
     </Simulation>
-    <downStreamTool>
-        <DownStreamTool name="vivado"/>
-    </downStreamTool>
-    <clockList>
-        <clock default="false" name="default" period="5"/>
-    </clockList>
     <name>
         <value string="zynq"/>
     </name>

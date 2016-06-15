@@ -40,6 +40,7 @@ void MemoryController::loadConfigViaFloatUnion(int num_layers,
   layer_t layer;
 L_LoadConfig:
   for (numlayers_t l = 0; l < num_layers; l++) {
+#pragma HLS LOOP_TRIPCOUNT min=26 max=26 avg=26
     memcpy(floats, &SHARED_DRAM[l * NUM_FLOATS_PER_LAYER],
            NUM_FLOATS_PER_LAYER * sizeof(float));
     floatsToLayerT(floats, layer);
@@ -53,9 +54,11 @@ void MemoryController::floatsToLayerT(float floats[NUM_FLOATS_PER_LAYER],
 
   // clang-format not used on this section to keep it compact
   // clang-format off
+  char _undef;
   union { float f; unsigned int i;} u;
   //layer.type = LAYER_NONE;  // type not used
-  layer.name[0] = '\0';     // name not used in FPGA
+  for (int i = 0; i < NET_NAME_MAX_LEN; i++)
+	  layer.name[i] = _undef;
   u.f = floats[0]; layer.width = u.i;
   u.f = floats[1]; layer.height = u.i;
   u.f = floats[2]; layer.channels_in = u.i;
@@ -118,7 +121,7 @@ data_t MemoryController::loadNextChannel() {
 
 void MemoryController::writeBackOutputPixel(coordinate_t y_out,
                                             coordinate_t x_out,
-                                            data_t *outputCache) {
+                                            OutputCache *outputCache) {
   // Calculate Output Memory Address
   memaddr_t px_offset = ch_out * (width_out * y_out + x_out);
   data_t *DRAM_LAYER_OUT, *DRAM_PX_OUT;
@@ -132,22 +135,23 @@ void MemoryController::writeBackOutputPixel(coordinate_t y_out,
   LOG(" - writing %2d channels to DRAM @%luB+\n", (int)ch_out,
       (long)DRAM_PX_OUT - (long)DRAM_DATA);
 
-  LOG_LEVEL++;
+  LOG_LEVEL_DECR;
 L_writeBackOutputPixel:
   for (channel_t co = 0; co < ch_out; co++) {
-#pragma HLS pipeline
-    DRAM_PX_OUT[co] = outputCache[co];
+#pragma HLS LOOP_TRIPCOUNT min=16 max=1024 avg=258
+	DRAM_PX_OUT[co] = outputCache->getChannel(co);
     LOG(" WB ch%d (@%luB): %6.2f\n", (int)co,
-        ((long)(DRAM_PX_OUT + co) - (long)DRAM_DATA), outputCache[co]);
+        ((long)(DRAM_PX_OUT + co) - (long)DRAM_DATA), outputCache->getChannel(co));
   }
-  LOG_LEVEL--;
+  LOG_LEVEL_DECR;
 }
 
-void MemoryController::writeBackResult(data_t *globalPoolCache) {
+void MemoryController::writeBackResult(OutputCache *globalPoolCache) {
 L_writeBackResult:
   for (int i = 0; i < ch_out; i++) {  // ch_out set from last layer
+#pragma HLS LOOP_TRIPCOUNT min=1000 max=1000 avg=1000
 #pragma HLS pipeline
-    DRAM_DATA[i] = globalPoolCache[i];
+    DRAM_DATA[i] = globalPoolCache->getChannel(i);
   }
   LOG("MemoryCtrl: writeBackResult (%d Bytes) to DRAM @0\n",
       (int)(ch_out * sizeof(data_t)));

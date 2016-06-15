@@ -15,6 +15,7 @@
 
 // Data Types for FPGA Implementation
 #include "fpga_top.hpp"
+#include "output_cache.hpp"
 
 // =====================
 // = Memory Controller =
@@ -29,8 +30,8 @@ class MemoryController {
   void setPixelLoadRow(coordinate_t y);
   data_t loadNextChannel();
   void writeBackOutputPixel(coordinate_t y_out, coordinate_t x_out,
-                            data_t *outputCache);
-  void writeBackResult(data_t *globalPoolCache);
+                            OutputCache *outputCache);
+  void writeBackResult(OutputCache *globalPoolCache);
 
  private:
   data_t *const SHARED_DRAM;

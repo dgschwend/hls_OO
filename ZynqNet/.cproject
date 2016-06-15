@@ -30,6 +30,7 @@
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/lnx64/tools/systemc/include"/>
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/include/ap_sysc"/>
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/scs/dgschwend/Dropbox/ETH/Masterarbeit/workspace/hls_OO"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1556546614" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="AESL_TB"/>
@@ -47,6 +48,7 @@
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/lnx64/tools/systemc/include"/>
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/include/ap_sysc"/>
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/scs/dgschwend/Dropbox/ETH/Masterarbeit/workspace/hls_OO"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1698508958" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="AESL_TB"/>
@@ -114,6 +116,7 @@
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/lnx64/tools/systemc/include"/>
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/include/ap_sysc"/>
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/scs/dgschwend/Dropbox/ETH/Masterarbeit/workspace/hls_OO"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2009326947" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -126,6 +129,7 @@
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/lnx64/tools/systemc/include"/>
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/include/ap_sysc"/>
 									<listOptionValue builtIn="false" value="/opt/toolchain/xilinx/Vivado_2016.1/Vivado_HLS/2016.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/scs/dgschwend/Dropbox/ETH/Masterarbeit/workspace/hls_OO"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.834826648" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
